@@ -12,17 +12,21 @@ export default function ConfirmDialog({
   onCancel
 }: ConfirmDialogProps) {
   return (
-    <div className="panel">
-      <h3>{title}</h3>
-      <p>{description}</p>
-      <div className="actions-row">
-        <button className="btn btn-secondary" onClick={onCancel}>
-          Cancel
-        </button>
-        <button className="btn btn-primary" onClick={onConfirm}>
-          Confirm
-        </button>
-      </div>
+    <div className="modal-overlay">
+      <div className="modal-backdrop"/>
+
+        <div className="panel modal-content">
+          <h3>{title}</h3>
+          <p>{description}</p>
+          <div className="actions-row">
+            <button className="btn btn-secondary" onClick={onCancel}>
+              Cancel
+            </button>
+            <button className="btn btn-primary" onClick={onConfirm}>
+              Confirm
+            </button>
+          </div>
+        </div>
     </div>
   );
 }

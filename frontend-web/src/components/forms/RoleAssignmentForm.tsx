@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 
 interface RoleAssignmentFormProps {
   availableRoles: string[];
@@ -20,6 +20,10 @@ export default function RoleAssignmentForm({
       prev.includes(role) ? prev.filter((item) => item !== role) : [...prev, role]
     );
   }
+
+  useEffect(() => {
+    setSelectedRoles(currentRoles);
+  }, [currentRoles]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

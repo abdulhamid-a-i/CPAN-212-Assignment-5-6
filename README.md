@@ -22,11 +22,18 @@ Team: Abdulhamid Weheliye (n01756626, Section A), Mbaye Fall (n01764121, Section
    npm install
 
 ## Implemented Features
-- User creation
-- User update
-- Role Assignment
-- User status update
+- Admin User creation
+- Admin User update
+- Admin User List
+- Role Assignment and Revocation
+- Admin User status update
 - Self-service suspension
-- Own Profile edites
+- Own Profile edits
 
 ## API Usage
+
+API's were used to: 
+- Create users
+- Update users
+- Allow user's to edit specific profile fields
+- Get users

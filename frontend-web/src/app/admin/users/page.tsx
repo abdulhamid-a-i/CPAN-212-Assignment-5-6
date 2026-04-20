@@ -9,9 +9,11 @@ import DataTable, { type DataTableColumn } from "@/components/tables/DataTable";
 import StatusBadge from "@/components/tables/StatusBadge";
 import { apiRequest } from "@/lib/api";
 import type { User } from "@/types/user";
+import { useRouter } from "next/navigation";
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     async function load() {
@@ -26,7 +28,10 @@ export default function AdminUsersPage() {
     { key: "username", label: "Username", render: (row) => row.username },
     { key: "fullName", label: "Full Name", render: (row) => `${row.profile.firstName} ${row.profile.lastName}` },
     { key: "roles", label: "Roles", render: (row) => row.roles.join(", ") },
-    { key: "accountStatus", label: "Status", render: (row) => <StatusBadge value={row.accountStatus} /> }
+    { key: "accountStatus", label: "Status", render: (row) => <StatusBadge value={row.accountStatus} /> },
+    { key: "actions", label: "Actions", render: (row) => <button
+          className="btn btn-secondary"
+          onClick={() => {router.push(`users/${row._id}/edit`); }}>Edit User</button> }
   ];
 
   return (
@@ -34,6 +39,17 @@ export default function AdminUsersPage() {
       <RoleGuard allowedRoles={["ADMIN"]}>
         <PageShell>
           <SectionHeader title="Admin Users" subtitle="Centralized user account administration." />
+          <button
+          className="btn btn-secondary"
+          onClick={() => {router.push("users/create"); }}>Create New User</button> <></><></>
+          <button
+          className="btn btn-secondary"
+          onClick={() => {router.push("/admin/rbac"); }}>Manage Roles</button> <></>
+          <button
+          className="btn btn-secondary"
+          onClick={() => {router.push("/admin/account-status"); }}>Manage Status</button>
+          <br></br>
+          <br></br>
           <DataTable columns={columns} data={users} rowKey={(row) => row._id} />
         </PageShell>
       </RoleGuard>

@@ -4,23 +4,33 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createUser, updateUser } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import Alert from "@/components/feedback/Alert";
+import { apiRequest } from "@/lib/api";
+
+const phoneRegex = new RegExp(
+  /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/
+);
 
 const userSchema = z.object({
+  username: z.string().min(3, "Username is required"),
   fullName: z.string().min(3, "Full name is required"),
   email: z.string().email("Invalid email"),
   password: z.string().optional(),
   roles: z.array(z.string()).min(1, "At least one role is required"),
-  status: z.enum(["ACTIVE", "INACTIVE"])
+  status: z.enum(["ACTIVE", "INACTIVE"]),
+  phone: z.string().regex(phoneRegex, "Invalid Phone Number"),
+  city: z.string().optional(),
+  country: z.string().optional(),
+  userType: z.string().min(3, "User Type is required")
 });
 
 type UserFormData = z.infer<typeof userSchema>;
 
 interface UserFormProps {
-  initialData?: any;
+  initialData?: UserFormData;
   isEdit?: boolean;
+  userId?: string;
 }
 
 const roleOptions = [
@@ -31,7 +41,7 @@ const roleOptions = [
   "CLAIMS_ADJUSTER"
 ];
 
-export default function UserForm({ initialData, isEdit = false }: UserFormProps) {
+export default function UserForm({ initialData, isEdit = false, userId }: UserFormProps) {
   const router = useRouter();
 
   const {
@@ -39,19 +49,32 @@ export default function UserForm({ initialData, isEdit = false }: UserFormProps)
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors, isSubmitting }
   } = useForm<UserFormData>({
     resolver: zodResolver(userSchema),
     defaultValues: {
+      username: initialData?.username || "",
       fullName: initialData?.fullName || "",
       email: initialData?.email || "",
       password: "",
       roles: initialData?.roles || [],
-      status: initialData?.status || "ACTIVE"
+      status: initialData?.status || "ACTIVE",
+      phone: initialData?.phone || "",
+      city: initialData?.city || "",
+      country: initialData?.country || "",
+      userType: initialData?.userType || ""
     }
   });
 
+
   const selectedRoles = watch("roles");
+
+  useEffect(() => {
+    if (initialData) {
+      reset(initialData);
+    }
+  }, [initialData, reset]);
 
   const toggleRole = (role: string) => {
     const current = selectedRoles || [];
@@ -64,16 +87,22 @@ export default function UserForm({ initialData, isEdit = false }: UserFormProps)
 
   const onSubmit = async (data: UserFormData) => {
     try {
-      if (isEdit) {
-        await updateUser(initialData._id, data);
-      } else {
-        await createUser(data);
-      }
+    if (isEdit) {
+      await apiRequest<UserFormData>(`/admin/users/${userId}`, {
+        method: "PUT",
+        body: data
+      });
+    } else {
+      await apiRequest<UserFormData>("/admin/users", {
+        method: "POST",
+        body: data
+      });
+    }
 
       router.push("/admin/users");
     } catch (error: any) {
       console.error(error);
-      alert("Failed to save user");
+      alert(error.message);
     }
   };
 
@@ -85,6 +114,19 @@ export default function UserForm({ initialData, isEdit = false }: UserFormProps)
       <h2 className="text-xl font-semibold">
         {isEdit ? "Edit User" : "Create User"}
       </h2>
+
+
+      {/* USERNAME */}
+      <div>
+        <label className="block text-sm font-medium">Username</label>
+        <input
+          {...register("username")}
+          className="mt-1 w-full border rounded-lg px-3 py-2"
+        />
+        {errors.username && (
+          <p className="text-red-500 text-sm">{errors.username.message}</p>
+        )}
+      </div>
 
       {/* FULL NAME */}
       <div>
@@ -146,6 +188,59 @@ export default function UserForm({ initialData, isEdit = false }: UserFormProps)
         )}
       </div>
 
+
+            {/* Phone */}
+      <div>
+        <label className="block text-sm font-medium">Phone</label>
+        <input
+          {...register("phone")}
+          className="mt-1 w-full border rounded-lg px-3 py-2"
+        />
+        {errors.phone && (
+          <p className="text-red-500 text-sm">{errors.phone.message}</p>
+        )}
+      </div>
+
+
+            {/* City */}
+      <div>
+        <label className="block text-sm font-medium">City</label>
+        <input
+          {...register("city")}
+          className="mt-1 w-full border rounded-lg px-3 py-2"
+        />
+        {errors.city && (
+          <p className="text-red-500 text-sm">{errors.city.message}</p>
+        )}
+      </div>
+
+
+
+            {/* Country */}
+      <div>
+        <label className="block text-sm font-medium">Country</label>
+        <input
+          {...register("country")}
+          className="mt-1 w-full border rounded-lg px-3 py-2"
+        />
+        {errors.country && (
+          <p className="text-red-500 text-sm">{errors.country.message}</p>
+        )}
+      </div>
+
+                  {/* Country */}
+      <div>
+        <label className="block text-sm font-medium">User Type</label>
+        <input
+          {...register("userType")}
+          className="mt-1 w-full border rounded-lg px-3 py-2"
+        />
+        {errors.userType && (
+          <p className="text-red-500 text-sm">{errors.userType.message}</p>
+        )}
+      </div>
+      
+
       {/* STATUS */}
       <div>
         <label className="block text-sm font-medium">Status</label>
@@ -155,6 +250,7 @@ export default function UserForm({ initialData, isEdit = false }: UserFormProps)
         >
           <option value="ACTIVE">Active</option>
           <option value="INACTIVE">Inactive</option>
+          <option value="SUSPENDED">Suspended</option>
         </select>
       </div>
 

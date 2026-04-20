@@ -2,6 +2,7 @@
 
 import { getToken, clearAuth } from "./auth";
 import type { ApiErrorResponse, ApiSuccessResponse } from "@/types/api";
+import { User } from "@/types/user";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 

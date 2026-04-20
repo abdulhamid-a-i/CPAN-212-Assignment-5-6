@@ -12,6 +12,7 @@ import type { User, UserProfile } from "@/types/user";
 export default function EditProfilePage() {
   const [profile, setProfile] = useState<User | null>(null);
   const router = useRouter();
+  
 
   useEffect(() => {
     async function load() {

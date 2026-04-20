@@ -141,7 +141,7 @@ export const userAdminService = {
     const user = await userRepository.create({
       username: username.trim(),
       passwordHash: passwordHash,
-      roles: [userRole],
+      roles: userRole,
       accountStatus: status,
       profile: {
         firstName: firstName,

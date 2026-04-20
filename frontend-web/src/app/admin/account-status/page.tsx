@@ -55,7 +55,7 @@ export default function AdminAccountStatusPage() {
         );
       } catch (err) {
         console.error("Failed to update status", err);
-        alert("Failed to update status");
+        alert("Failed to update status - Reason: " + err.message);
       }
     };
 

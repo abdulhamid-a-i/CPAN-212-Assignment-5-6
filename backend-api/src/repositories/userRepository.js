@@ -38,5 +38,6 @@ export const userRepository = {
       match: { name: "CUSTOMER" }
     })
     .then(users => users.filter(user => user.roles.length > 0));
-  } 
+  }
+
 };

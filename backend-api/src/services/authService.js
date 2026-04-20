@@ -12,6 +12,10 @@ export const authService = {
       throw new AppError("Invalid credentials", 401);
     }
 
+    if (user.accountStatus === "SUSPENDED"){
+      throw new AppError("Forbidden: Suspended account", 401);
+    }
+
     const validPassword = await bcrypt.compare(password, user.passwordHash);
     if (!validPassword) {
       throw new AppError("Invalid credentials", 401);

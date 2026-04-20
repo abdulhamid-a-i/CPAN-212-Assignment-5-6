@@ -20,6 +20,26 @@ export const userAdminController = {
     }
  },
 
+  async getUser(req, res, next) {
+    try {
+      const data = await userAdminService.getUser(req.params.userId);
+      return successResponse(res, data, "User loaded");
+    } catch (error) {
+      next(error);
+    }
+ },
+   async updateUser(req, res, next) {
+    try {
+      const data = await userAdminService.updateUser(
+        req.params.userId,
+        req.body
+      );
+      return successResponse(res, data, "User updated");
+    } catch (error) {
+      next(error);
+    }
+  },
+
   async updateUserStatus(req, res, next) {
     try {
       const data = await userAdminService.updateUserStatus(
@@ -29,6 +49,14 @@ export const userAdminController = {
       return successResponse(res, data, "User status updated");
     } catch (error) {
       next(error);
+    }
+  },
+    async createUser(req, res, next){
+    try {
+      const result = await userAdminService.createUser(req.body);
+      return successResponse(res, result, "User created");
+    } catch (error) {
+      next(error)
     }
   }
   

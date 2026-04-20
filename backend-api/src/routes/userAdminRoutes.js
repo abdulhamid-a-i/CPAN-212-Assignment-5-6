@@ -7,8 +7,13 @@ import { handleValidation } from "../middleware/validationMiddleware.js";
 
 const router = Router();
 
-router.get("/", authenticate, authorizeRoles("ADMIN"), userAdminController.listUsers);
-router.put("/:userId/status", authenticate, authorizeRoles("ADMIN"), updateUserStatusValidator, handleValidation, userAdminController.updateUserStatus);
-router.get("/customers", authenticate, authorizeRoles("ADMIN", "AGENT"), userAdminController.listCustomers);
+router.use(authenticate);
+
+router.get("/", authorizeRoles("ADMIN"), userAdminController.listUsers);
+router.put("/:userId/status", authorizeRoles("ADMIN"), updateUserStatusValidator, handleValidation, userAdminController.updateUserStatus);
+router.get("/customers", authorizeRoles("ADMIN", "AGENT"), userAdminController.listCustomers);
+router.post("/",  authorizeRoles("ADMIN"), userAdminController.createUser);
+router.get("/:userId", authorizeRoles("ADMIN"), userAdminController.getUser);
+router.put("/:userId", authorizeRoles("ADMIN"), userAdminController.updateUser);
 
 export default router;

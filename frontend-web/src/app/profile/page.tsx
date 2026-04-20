@@ -76,6 +76,17 @@ export default function ProfilePage() {
           title="Profile"
           subtitle="Comprehensive user identity and business profile data."
         />
+        <div style={{display: "flex", gap:"6px", marginBottom:"15px"}}>
+          <button
+        className="btn btn-secondary" style={{width:"130px"}}
+        onClick={() => {router.push("/profile/edit"); }}>Edit</button><></>
+        {!cannotSeeSuspend && (
+          <button
+          className="btn btn-danger" style={{width:"130px"}}
+          onClick={() => setModal(true)}>Suspend Acc</button>
+        )}
+        </div>
+        
         {showError ? (
           <div>
             <Alert variant="error" message={Err}></Alert>
@@ -99,16 +110,6 @@ export default function ProfilePage() {
               <p><strong>City:</strong> {profile.profile.city || "-"}</p>
               <p><strong>Country:</strong> {profile.profile.country || "-"}</p>
               <p><strong>User Type:</strong> {profile.profile.userType}</p>
-        <button
-        className="btn btn-secondary"
-        onClick={() => {router.push("/profile/edit"); }}>Edit</button>
-        <br></br>
-        <br></br>
-        {!cannotSeeSuspend && (
-          <button
-          className="btn btn-danger"
-          onClick={() => setModal(true)}>Suspend Acc</button>
-        )}
 
             </div>
             
